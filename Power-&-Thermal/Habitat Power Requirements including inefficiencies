@@ -1,0 +1,42 @@
+% James Pannullo
+% AAE 450 Senior Design
+clc; clear
+%% Power Requirements including Efficiencies
+DC_convert = 0.9;   % DC-DC converter efficiency
+DC_switch = 0.9;    % DC switching unit efficiency
+charge = 0.97;      % Battery charge efficiency
+discharge = 0.98;   % Battery discharge efficiency
+
+lunarDay = 709; % Total number of hours in lunar day
+time_dark = lunarDay * 0.15;    % Dark hours in lunar day
+time_light = lunarDay - time_dark;  % Light hours in lunar day
+power_used = linspace(50,250,100);  % Vector of habatat power (kW) from 50-250
+
+battery_power = power_used * time_dark /(discharge * DC_switch); % Calculates how many kWh needed for batteries
+battery_power_gen = battery_power /(time_light * charge);  % Calculates the rate we need to charge batteries
+power_req = power_used / (DC_convert * DC_switch) + battery_power_gen;  % Calculates total power required from solar panels
+power_loss = power_req - power_used;  % Difference Between power required and power needed creates power lost
+
+figure
+plot(power_used,power_req, 'linewidth', 2); grid on;
+xlabel("Habitat Power Needs (kW)");
+ylabel("Total Power Required from Solar Panels (kW)");
+title("Total Power Requirements including inefficiencies");
+
+figure
+plot(power_used,battery_power, 'linewidth', 2); grid on;
+xlabel("Habitat Power Needs(kW)");
+ylabel("Battery Power (kWh)");
+title("Total Battery Power Requirements including inefficiencies");
+
+figure
+plot(power_used,battery_power_gen, 'linewidth', 2); grid on
+xlabel("Habitat Power Needs (kW)");
+ylabel("Battery Power Generation (kW/h)");
+title("Total Battery Power Generation Requirements including inefficiencies");
+
+figure
+plot(power_used,power_loss, 'linewidth', 2); grid on;
+xlabel("Habitat Power Needs (kW)");
+ylabel("Power Losses (kW)");
+title("Total Solar Power Losses due to inefficiencies");
